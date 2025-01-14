@@ -4,6 +4,7 @@ import plus from "../assets/icons/plus.svg";
 import { motion, AnimatePresence } from "framer-motion";
 import { FileData } from "../types";
 import useDrive from "../store/hooks/useDrive";
+import { v4 as uuidv4 } from "uuid";
 
 interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   directory?: string;
@@ -14,7 +15,7 @@ const UploadButton = () => {
   const [showUpload, setShowUpload] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { addNewFile } = useDrive();
+  const { addNewSingleFile, addNewMultipleFiles } = useDrive();
 
   const handleFileRead = async (file: File): Promise<FileData> => {
     return new Promise((resolve) => {
@@ -23,6 +24,7 @@ const UploadButton = () => {
       reader.onload = (e) => {
         const content = e.target?.result as string;
         const fileData: FileData = {
+          id: uuidv4(),
           name: file.name,
           type: file.type,
           size: file.size,
@@ -48,13 +50,24 @@ const UploadButton = () => {
   ) => {
     const selectedFiles = event.target.files;
     if (!selectedFiles) return;
-    const fileData = await handleFileRead(selectedFiles[0]);
 
     try {
-      addNewFile(fileData);
-      alert("completed");
+      if (selectedFiles.length === 1) {
+        const fileData = await handleFileRead(selectedFiles[0]);
+        addNewSingleFile(fileData);
+      } else {
+        const fileDataArray: FileData[] = [];
+
+        for (let i = 0; i < selectedFiles.length; i++) {
+          const file = selectedFiles[i];
+          const fileData = await handleFileRead(file);
+          fileDataArray.push(fileData);
+        }
+
+        addNewMultipleFiles(fileDataArray);
+      }
     } catch (error) {
-      console.error("Error storing files in localStorage:", error);
+      console.error("Error storing files", error);
       alert(
         "Error storing files. The files might be too large for localStorage."
       );
