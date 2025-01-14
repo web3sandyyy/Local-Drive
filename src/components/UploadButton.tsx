@@ -3,6 +3,7 @@ import upload from "../assets/icons/upload.svg";
 import plus from "../assets/icons/plus.svg";
 import { motion, AnimatePresence } from "framer-motion";
 import { FileData } from "../types";
+import localforage from "localforage";
 
 interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   directory?: string;
@@ -60,7 +61,18 @@ const UploadButton = () => {
     setFiles(updatedFiles);
 
     try {
-      localStorage.setItem("uploadedFiles", JSON.stringify(updatedFiles));
+      localforage.setItem(
+        "files",
+        JSON.stringify(updatedFiles),
+        function (err) {
+          if (err) {
+            alert(err);
+            console.log(err);
+          } else {
+            alert("completed");
+          }
+        }
+      );
     } catch (error) {
       console.error("Error storing files in localStorage:", error);
       alert(
@@ -90,7 +102,7 @@ const UploadButton = () => {
                 src={upload}
                 alt="upload"
                 className="w-7 h-7 m-auto"
-                initial={{ opacity: 0, rotate: -135 }}
+                initial={{ opacity: 0, rotate: 135 }}
                 animate={{ opacity: 1, rotate: 0 }}
                 exit={{ opacity: 0, rotate: 135 }}
                 transition={{ duration: 0.1 }}
@@ -102,8 +114,8 @@ const UploadButton = () => {
                 alt="plus"
                 className="w-8 h-8 absolute top-0 right-0 "
                 initial={{ opacity: 0, rotate: -135 }}
-                animate={{ opacity: 1, rotate: 45 }}
-                exit={{ opacity: 0, rotate: 135 }}
+                animate={{ opacity: 1, rotate: -45 }}
+                exit={{ opacity: 0, rotate: -135 }}
                 transition={{ duration: 0.1 }}
               />
             )}
@@ -123,8 +135,8 @@ const UploadButton = () => {
             className="text-base flex flex-col divide-y border rounded-b-lg overflow-hidden  bg-white"
           >
             <div className="w-full p-2 ">
-              <div className="relative hover:bg-gray-200 duration-200 p-1 rounded-lg  ">
-                <p className="p-1">Upload file</p>
+              <div className="relative hover:bg-gray-200 duration-200 rounded-lg  ">
+                <p className="p-2">Upload file</p>
                 <input
                   type="file"
                   ref={fileInputRef}
@@ -135,8 +147,8 @@ const UploadButton = () => {
                 />
               </div>
 
-              <div className="relative w-full hover:bg-gray-200 duration-200 p-1 rounded-lg ">
-                <p className="p-1">Upload folder</p>
+              <div className="relative w-full hover:bg-gray-200 duration-200 rounded-lg ">
+                <p className="p-2">Upload folder</p>
                 <input
                   type="file"
                   ref={fileInputRef}

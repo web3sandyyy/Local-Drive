@@ -4,7 +4,7 @@ import UploadButton from "./UploadButton";
 
 const Sidebar = () => {
   return (
-    <div className="h-screen min-w-[250px] bg-gray-200">
+    <div className="h-screen min-w-[150px] max-w-[250px] w-[30%] bg-gray-200">
       <div className="flex justify-center items-center gap-2 text-2xl font-bold mt-4 px-4 py-2 text-center">
         <p className="w-fit">Drive</p>
         <img src={driveIcon} alt="drive" className="w-6 h-6" />
