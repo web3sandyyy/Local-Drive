@@ -4,7 +4,7 @@ import Sidebar from "./components/Sidebar";
 import { FileData } from "./types";
 import localforage from "localforage";
 import FileCard from "./components/FileCard";
-import { motion, AnimatePresence } from "framer-motion";
+import FolderCard from "./components/FolderCard";
 
 function App() {
   const [files, setFiles] = useState<FileData[]>([]);
@@ -42,6 +42,7 @@ function App() {
               {files.map((file, index) => (
                 <FileCard key={index} file={file} />
               ))}
+              <FolderCard />
             </div>
           </div>
         </div>

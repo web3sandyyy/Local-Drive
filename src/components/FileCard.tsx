@@ -32,7 +32,7 @@ const FileCard = ({ file }: { file: FileData }) => {
             <div className="bg-black rounded-full w-1 h-1 "></div>
           </div>
         </div>
-        <p className="text-gray-500">{file.type || "Unknown"}</p>
+        <p className="text-gray-500 w-full truncate">{file.type || "Unknown"}</p>
       </div>
 
       <AnimatePresence mode="wait">
