@@ -9,7 +9,7 @@ const FileCard = ({ file }: { file: FileData }) => {
   const [showMore, setShowMore] = useState(false);
   return (
     <div className="w-full relative overflow-hidden">
-      <div className="aspect-square border rounded-3xl p-2 overflow-hidden ">
+      <div className="aspect-square border rounded-3xl p-1 md:p-2 overflow-hidden ">
         {file.type.startsWith("image/") && (
           <img
             src={file.content}
@@ -42,9 +42,9 @@ const FileCard = ({ file }: { file: FileData }) => {
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ duration: 0.2 }}
-            className="absolute bottom-0 right-0 w-full h-fit bg-white border rounded-b-lg"
+            className="md:absolute fixed z-10 bottom-0 right-0 w-full h-fit bg-gray-200 md:bg-white border border-white md:border-gray-200 rounded-b-lg"
           >
-            <div className="w-full p-2 flex flex-col divide-y-2">
+            <div className="w-full p-2 flex flex-col divide-y-2 divide-white md:divide-gray-200 ">
               <div className="flex items-center hover:bg-gray-200 hover:rounded-md">
                 <p className="p-1 ">Rename</p>
                 <img src={rename} alt="rename" className="w-4 h-4" />
@@ -70,7 +70,7 @@ const FileCard = ({ file }: { file: FileData }) => {
               </div>
             </div>
             <button
-              className="bg-gray-200 w-full p-1 text-sm font-semibold rounded-b-lg"
+              className="bg-white md:bg-gray-200 w-full p-2 md:p-1 text-sm font-semibold rounded-b-lg"
               onClick={() => setShowMore(false)}
             >
               Close

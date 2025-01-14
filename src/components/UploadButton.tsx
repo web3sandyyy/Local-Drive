@@ -85,7 +85,7 @@ const UploadButton = () => {
     <div>
       <div
         onClick={() => setShowUpload(!showUpload)}
-        className={`mt-4 cursor-pointer flex items-center  hover:bg-gray-100 duration-100 transition-all  border p-4  rounded-lg ${
+        className={`mt-2 md:mt-4 cursor-pointer flex items-center  hover:bg-gray-100 duration-100 transition-all  border p-4  rounded-lg ${
           showUpload
             ? "border-b-0 rounded-b-none bg-gray-100"
             : "shadow-md bg-white "
