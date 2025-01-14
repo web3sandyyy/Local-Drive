@@ -1,31 +1,11 @@
-import { useEffect, useState } from "react";
 import "./App.css";
 import Sidebar from "./components/Sidebar";
-import { FileData } from "./types";
-import localforage from "localforage";
 import FileCard from "./components/FileCard";
 import FolderCard from "./components/FolderCard";
+import useDrive from "./store/hooks/useDrive";
 
 function App() {
-  const [files, setFiles] = useState<FileData[]>([]);
-
-  const loadFilesFromStorage = () => {
-    localforage
-      .getItem("files", function (err) {
-        if (err) {
-          console.error("Oh noes!");
-        }
-      })
-      .then((value) => {
-        if (value) {
-          setFiles(JSON.parse(value));
-        }
-      });
-  };
-
-  useEffect(() => {
-    loadFilesFromStorage();
-  }, []);
+  const { files } = useDrive();
 
   return (
     <div className="w-full min-h-screen md:flex">

@@ -20,7 +20,7 @@ const FolderCard = () => {
           </div>
         </div>
 
-        <div className="h-[65%] absolute bottom-0 left-0 right-0 flex justify-center items-center w-full bg-white border rounded-2xl md:rounded-3xl">
+        <div className="h-[65%] shadow-md inset-shadow-lg absolute bottom-0 left-0 right-0 flex justify-center items-center w-full bg-white border rounded-2xl md:rounded-3xl">
           <p className="text-2xl font-black text-gray-600">+5</p>
         </div>
       </div>

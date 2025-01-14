@@ -3,7 +3,7 @@ import upload from "../assets/icons/upload.svg";
 import plus from "../assets/icons/plus.svg";
 import { motion, AnimatePresence } from "framer-motion";
 import { FileData } from "../types";
-import localforage from "localforage";
+import useDrive from "../store/hooks/useDrive";
 
 interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   directory?: string;
@@ -14,7 +14,7 @@ const UploadButton = () => {
   const [showUpload, setShowUpload] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [files, setFiles] = useState<FileData[]>([]);
+  const { addNewFile } = useDrive();
 
   const handleFileRead = async (file: File): Promise<FileData> => {
     return new Promise((resolve) => {
@@ -48,31 +48,11 @@ const UploadButton = () => {
   ) => {
     const selectedFiles = event.target.files;
     if (!selectedFiles) return;
-
-    const fileDataArray: FileData[] = [];
-
-    for (let i = 0; i < selectedFiles.length; i++) {
-      const file = selectedFiles[i];
-      const fileData = await handleFileRead(file);
-      fileDataArray.push(fileData);
-    }
-
-    const updatedFiles = [...files, ...fileDataArray];
-    setFiles(updatedFiles);
+    const fileData = await handleFileRead(selectedFiles[0]);
 
     try {
-      localforage.setItem(
-        "files",
-        JSON.stringify(updatedFiles),
-        function (err) {
-          if (err) {
-            alert(err);
-            console.log(err);
-          } else {
-            alert("completed");
-          }
-        }
-      );
+      addNewFile(fileData);
+      alert("completed");
     } catch (error) {
       console.error("Error storing files in localStorage:", error);
       alert(
@@ -80,6 +60,44 @@ const UploadButton = () => {
       );
     }
   };
+
+  // const handleFileChange = async (
+  //   event: React.ChangeEvent<HTMLInputElement>
+  // ) => {
+  //   const selectedFiles = event.target.files;
+  //   if (!selectedFiles) return;
+
+  //   const fileDataArray: FileData[] = [];
+
+  //   for (let i = 0; i < selectedFiles.length; i++) {
+  //     const file = selectedFiles[i];
+  //     const fileData = await handleFileRead(file);
+  //     fileDataArray.push(fileData);
+  //   }
+
+  //   const updatedFiles = [...files, ...fileDataArray];
+  //   setFiles(updatedFiles);
+
+  //   try {
+  //     localforage.setItem(
+  //       "files",
+  //       JSON.stringify(updatedFiles),
+  //       function (err) {
+  //         if (err) {
+  //           alert(err);
+  //           console.log(err);
+  //         } else {
+  //           alert("completed");
+  //         }
+  //       }
+  //     );
+  //   } catch (error) {
+  //     console.error("Error storing files in localStorage:", error);
+  //     alert(
+  //       "Error storing files. The files might be too large for localStorage."
+  //     );
+  //   }
+  // };
 
   return (
     <div>
