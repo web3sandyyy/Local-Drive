@@ -19,9 +19,9 @@ const FileCard = ({ file }: { file: FileData }) => {
   };
 
   return (
-    <div className="w-full relative overflow-hidden">
+    <div className="w-full h-fit relative overflow-hidden">
       <div className="aspect-square border rounded-3xl p-1 md:p-2 overflow-hidden ">
-        {file.type.startsWith("image/") && (
+        {file.fileType.startsWith("image/") && (
           <img
             src={file.content}
             alt={file.name}
@@ -49,7 +49,7 @@ const FileCard = ({ file }: { file: FileData }) => {
           </div>
         </div>
         <p className="text-gray-500 w-full truncate">
-          {file.type || "Unknown"}
+          {file.fileType || "Unknown"}
         </p>
       </div>
 
@@ -60,7 +60,7 @@ const FileCard = ({ file }: { file: FileData }) => {
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ duration: 0.2 }}
-            className="md:absolute fixed z-10 bottom-0 right-0 w-full h-fit bg-gray-200 md:bg-white border border-white md:border-gray-200 rounded-b-lg"
+            className="md:absolute fixed z-10 bottom-0 right-0 w-full h-fit bg-gray-200 md:bg-white border border-white md:border-gray-200 rounded-b-lg max-h-full overflow-auto"
           >
             <div className="w-full p-2 flex flex-col divide-y-2 divide-white md:divide-gray-200 ">
               {showRename ? (
@@ -92,7 +92,7 @@ const FileCard = ({ file }: { file: FileData }) => {
                 <p>Details</p>
                 <div className="text-gray-500">
                   <p>Name : {file.name}</p>
-                  <p>Type : {file.type || "Unknown"}</p>
+                  <p>Type : {file.fileType || "Unknown"}</p>
                   <p>Size : {file.size && formatFileSize(file.size)}</p>
                   <p>
                     Last Modified :{" "}
@@ -104,7 +104,10 @@ const FileCard = ({ file }: { file: FileData }) => {
             </div>
             {showRename ? (
               <div className="flex rounded-b-lg">
-                <button onClick={() => handleNameUpdate()} className="w-full text-center p-2 md:p-1 text-sm font-semibold bg-green-500 rounded-bl-lg">
+                <button
+                  onClick={() => handleNameUpdate()}
+                  className="w-full text-center p-2 md:p-1 text-sm font-semibold bg-green-500 rounded-bl-lg"
+                >
                   Save
                 </button>
                 <button

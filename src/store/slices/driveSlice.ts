@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { FileData } from "../../types";
+import { DriveItem, FileData, FolderData } from "../../types";
 
 interface DriveState {
-  files: FileData[];
+  files: DriveItem[];
 }
 
 interface RenameFileProps {
@@ -22,10 +22,8 @@ const driveSlice = createSlice({
       state.files.push(action.payload);
     },
 
-    addMultipleFiles(state, action: PayloadAction<FileData[]>) {
-      for (let i = 0; i < action.payload.length; i++) {
-        state.files.push(action.payload[i]);
-      }
+    addMultipleFiles(state, action: PayloadAction<DriveItem[]>) {
+      state.files.push(...action.payload);
     },
 
     deleteSingleFile(state, action: PayloadAction<string>) {

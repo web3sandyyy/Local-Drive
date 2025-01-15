@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FileData } from "../types";
 import useDrive from "../store/hooks/useDrive";
 import { v4 as uuidv4 } from "uuid";
+import { DriveItem, FolderData } from "../types";
 
 interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   directory?: string;
@@ -17,7 +18,10 @@ const UploadButton = () => {
 
   const { addNewSingleFile, addNewMultipleFiles } = useDrive();
 
-  const handleFileRead = async (file: File): Promise<FileData> => {
+  const handleFileRead = async (
+    file: File,
+    path: string = ""
+  ): Promise<FileData> => {
     return new Promise((resolve) => {
       const reader = new FileReader();
 
@@ -26,10 +30,12 @@ const UploadButton = () => {
         const fileData: FileData = {
           id: uuidv4(),
           name: file.name,
-          type: file.type,
+          fileType: file.type,
           size: file.size,
           lastModified: file.lastModified,
           content: content,
+          itemKind: "file",
+          path: path,
         };
         resolve(fileData);
       };
@@ -45,6 +51,66 @@ const UploadButton = () => {
     });
   };
 
+  const createFolderStructure = (files: FileData[]): DriveItem[] => {
+    const root: DriveItem[] = [];
+    const folderMap = new Map<string, FolderData>();
+
+    files.forEach((file) => {
+      const pathParts = file.path.split("/").filter(Boolean);
+      let currentPath = "";
+
+      pathParts.forEach((part, index) => {
+        const isLast = index === pathParts.length - 1;
+        currentPath = currentPath ? `${currentPath}/${part}` : part;
+
+        if (!isLast && !folderMap.has(currentPath)) {
+          const folderData: FolderData = {
+            id: uuidv4(),
+            folderName: currentPath,
+            name: part,
+            itemKind: "folder",
+            lastModified: Date.now(),
+            children: [],
+            path: currentPath,
+          };
+          folderMap.set(currentPath, folderData);
+        }
+      });
+    });
+
+    files.forEach((file) => {
+      const pathParts = file.path.split("/").filter(Boolean);
+      const fileName = pathParts.pop()!;
+      const folderPath = pathParts.join("/");
+
+      if (folderPath) {
+        const parentFolder = folderMap.get(folderPath);
+        if (parentFolder) {
+          parentFolder.children.push(file);
+        }
+      } else {
+        root.push(file);
+      }
+    });
+
+    folderMap.forEach((folder) => {
+      const pathParts = folder.path.split("/").filter(Boolean);
+      pathParts.pop();
+      const parentPath = pathParts.join("/");
+
+      if (parentPath) {
+        const parentFolder = folderMap.get(parentPath);
+        if (parentFolder) {
+          parentFolder.children.push(folder);
+        }
+      } else {
+        root.push(folder);
+      }
+    });
+
+    return root;
+  };
+
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -52,19 +118,20 @@ const UploadButton = () => {
     if (!selectedFiles) return;
 
     try {
-      if (selectedFiles.length === 1) {
-        const fileData = await handleFileRead(selectedFiles[0]);
-        addNewSingleFile(fileData);
+      const fileDataArray: FileData[] = [];
+
+      for (let i = 0; i < selectedFiles.length; i++) {
+        const file = selectedFiles[i];
+        const path = (file as any).webkitRelativePath || "";
+        const fileData = await handleFileRead(file, path);
+        fileDataArray.push(fileData);
+      }
+
+      if (fileDataArray.length === 1 && !fileDataArray[0].path) {
+        addNewSingleFile(fileDataArray[0]);
       } else {
-        const fileDataArray: FileData[] = [];
-
-        for (let i = 0; i < selectedFiles.length; i++) {
-          const file = selectedFiles[i];
-          const fileData = await handleFileRead(file);
-          fileDataArray.push(fileData);
-        }
-
-        addNewMultipleFiles(fileDataArray);
+        const organizedStructure = createFolderStructure(fileDataArray);
+        addNewMultipleFiles(organizedStructure);
       }
     } catch (error) {
       console.error("Error storing files", error);
@@ -73,44 +140,6 @@ const UploadButton = () => {
       );
     }
   };
-
-  // const handleFileChange = async (
-  //   event: React.ChangeEvent<HTMLInputElement>
-  // ) => {
-  //   const selectedFiles = event.target.files;
-  //   if (!selectedFiles) return;
-
-  //   const fileDataArray: FileData[] = [];
-
-  //   for (let i = 0; i < selectedFiles.length; i++) {
-  //     const file = selectedFiles[i];
-  //     const fileData = await handleFileRead(file);
-  //     fileDataArray.push(fileData);
-  //   }
-
-  //   const updatedFiles = [...files, ...fileDataArray];
-  //   setFiles(updatedFiles);
-
-  //   try {
-  //     localforage.setItem(
-  //       "files",
-  //       JSON.stringify(updatedFiles),
-  //       function (err) {
-  //         if (err) {
-  //           alert(err);
-  //           console.log(err);
-  //         } else {
-  //           alert("completed");
-  //         }
-  //       }
-  //     );
-  //   } catch (error) {
-  //     console.error("Error storing files in localStorage:", error);
-  //     alert(
-  //       "Error storing files. The files might be too large for localStorage."
-  //     );
-  //   }
-  // };
 
   return (
     <div>

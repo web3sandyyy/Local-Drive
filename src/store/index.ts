@@ -1,11 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
-import storage from "redux-persist/lib/storage";
 import driveReducer from "./slices/driveSlice";
+import localforage from 'localforage';
 
 const persistConfig = {
   key: "root",
-  storage,
+  storage: localforage,
 };
 
 const persistedReducer = persistReducer(persistConfig, driveReducer);

@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { FileData } from "../../types";
+import { FileData, DriveItem } from "../../types";
 import { addSingleFile, addMultipleFiles, deleteSingleFile, deleteAllFiles, renameFile } from "../slices/driveSlice";
 
 const useDrive = () => {
@@ -10,7 +10,7 @@ const useDrive = () => {
     dispatch(addSingleFile(newFile));
   };
 
-  const addNewMultipleFiles = (newFile: FileData[]) => {
+  const addNewMultipleFiles = (newFile: DriveItem[]) => {
     dispatch(addMultipleFiles(newFile));
   };
 
@@ -26,7 +26,14 @@ const useDrive = () => {
     dispatch(renameFile({ id: fileId, name: newName }));
   };
 
-  return { files, addNewSingleFile, addNewMultipleFiles, delSingleFile, delAllFiles, editFileName };
+  return {
+    files,
+    addNewSingleFile,
+    addNewMultipleFiles,
+    delSingleFile,
+    delAllFiles,
+    editFileName,
+  };
 };
 
 export default useDrive;
