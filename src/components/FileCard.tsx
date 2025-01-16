@@ -13,7 +13,7 @@ const FileCard = ({ file }: { file: FileData }) => {
   const { delSingleFile, editFileName } = useDrive();
 
   const handleNameUpdate = () => {
-    editFileName(file.id, newName);
+    editFileName(file.id, newName, file.path, file.itemKind);
     setShowRename(false);
     setShowMore(false);
   };
@@ -94,6 +94,7 @@ const FileCard = ({ file }: { file: FileData }) => {
                   <p>Name : {file.name}</p>
                   <p>Type : {file.fileType || "Unknown"}</p>
                   <p>Size : {file.size && formatFileSize(file.size)}</p>
+                  {file.path && <p>Path : {file.path}</p>}
                   <p>
                     Last Modified :{" "}
                     {file.lastModified &&

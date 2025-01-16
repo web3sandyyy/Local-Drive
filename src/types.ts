@@ -1,4 +1,9 @@
-export type ItemKind = "file" | "folder";
+
+
+export enum ItemKind {
+  FILE = "FILE",
+  FOLDER = "FOLDER",
+}
 
 export interface BaseItem {
   id: string;
@@ -9,15 +14,14 @@ export interface BaseItem {
 }
 
 export interface FileData extends BaseItem {
-  itemKind: "file";
+  itemKind: ItemKind.FILE;
   fileType: string;
   size: number;
   content: string;
 }
 
 export interface FolderData extends BaseItem {
-  itemKind: "folder";
-  folderName: string;
+  itemKind: ItemKind.FOLDER;
   children: DriveItem[];
 }
 

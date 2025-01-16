@@ -4,12 +4,26 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import dustbin from "../assets/icons/dustbin.svg";
 import rename from "../assets/icons/rename.svg";
-import { FolderData } from "../types";
+import { FolderData, ItemKind } from "../types";
 import FileCard from "./FileCard";
+import useDrive from "../store/hooks/useDrive";
 
 const FolderCard = ({ folder }: { folder: FolderData }) => {
   const [showMore, setShowMore] = useState(false);
   const [showFiles, setShowFiles] = useState(false);
+  const [newName, setNewName] = useState(folder.name);
+  const [showRename, setShowRename] = useState(false);
+
+  const { delSingleFile, editFileName } = useDrive();
+
+  const handleNameUpdate = () => {
+    const id = folder.id;
+    const name = newName;
+    editFileName(id, name, folder.path, folder.itemKind);
+    setShowRename(false);
+    setShowMore(false);
+  };
+
   return (
     <>
       <div className="w-full relative">
@@ -35,9 +49,7 @@ const FolderCard = ({ folder }: { folder: FolderData }) => {
 
         <div className="p-2 pb-0 text-sm">
           <div className="flex gap-1">
-            <p className="font-semibold flex-grow truncate">
-              {folder.folderName}
-            </p>
+            <p className="font-semibold flex-grow truncate">{folder.name}</p>
             <div
               onClick={() => setShowMore(true)}
               className="flex items-center gap-[2px]"
@@ -59,12 +71,27 @@ const FolderCard = ({ folder }: { folder: FolderData }) => {
               className="md:absolute fixed z-10 bottom-0 right-0 w-full h-fit bg-gray-200 md:bg-white border border-white md:border-gray-200 rounded-b-lg"
             >
               <div className="w-full p-2 flex flex-col divide-y-2 divide-white md:divide-gray-200 ">
-                <div className="flex items-center hover:bg-gray-200 hover:rounded-md">
-                  <p className="p-1 ">Rename</p>
-                  <img src={rename} alt="rename" className="w-4 h-4" />
-                </div>
+                {showRename ? (
+                  <input
+                    type="text"
+                    value={newName}
+                    onChange={(e) => setNewName(e.target.value)}
+                    className="w-full p-1 text-sm font-semibold border rounded-md mb-1"
+                  />
+                ) : (
+                  <div
+                    onClick={() => setShowRename(true)}
+                    className="flex items-center hover:bg-gray-200 hover:rounded-md"
+                  >
+                    <p className="p-1 ">Rename</p>
+                    <img src={rename} alt="rename" className="w-4 h-4" />
+                  </div>
+                )}
 
-                <div className="flex items-center hover:bg-gray-200 hover:rounded-md">
+                <div
+                  onClick={() => delSingleFile(folder.id)}
+                  className="flex items-center hover:bg-gray-200 hover:rounded-md"
+                >
                   <p className="p-1 text-red-600">Delete</p>
                   <img src={dustbin} alt="delete" className="w-5 h-5" />
                 </div>
@@ -72,21 +99,45 @@ const FolderCard = ({ folder }: { folder: FolderData }) => {
                 <div className="text-sm px-1 pt-1">
                   <p>Details</p>
                   <div className="text-gray-500">
-                    <p>Name : {folder.folderName}</p>
+                    <p>Name : {folder.name}</p>
                     <p>
                       Last Modified :{" "}
                       {folder.lastModified &&
                         formatTimestampToDate(folder.lastModified)}
                     </p>
+                    {folder.path && <p>Path : {folder.path}</p>}
                   </div>
                 </div>
               </div>
-              <button
-                className="bg-white md:bg-gray-200 w-full p-2 md:p-1 text-sm font-semibold rounded-b-lg"
-                onClick={() => setShowMore(false)}
-              >
-                Close
-              </button>
+              {showRename ? (
+                <div className="flex rounded-b-lg">
+                  <button
+                    onClick={() => handleNameUpdate()}
+                    className="w-full text-center p-2 md:p-1 text-sm font-semibold bg-green-500 rounded-bl-lg"
+                  >
+                    Save
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowRename(false);
+                      setShowMore(false);
+                    }}
+                    className="w-full text-center p-2 md:p-1 text-sm font-semibold bg-red-500 rounded-br-lg"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <button
+                  className="bg-white md:bg-gray-200 w-full p-2 md:p-1 text-sm font-semibold rounded-b-lg"
+                  onClick={() => {
+                    setShowRename(false);
+                    setShowMore(false);
+                  }}
+                >
+                  Close
+                </button>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
@@ -103,7 +154,7 @@ const FolderCard = ({ folder }: { folder: FolderData }) => {
 
           <div className="flex-grow w-full relative p-2  md:px-4 grid gap-2 md:gap-4 grid-cols-2 md:grid-cols-3  lg:grid-cols-4 overflow-auto bg-white">
             {folder.children.map((file, index) =>
-              file.itemKind === "file" ? (
+              file.itemKind === ItemKind.FILE ? (
                 <FileCard key={index} file={file} />
               ) : (
                 <FolderCard key={index} folder={file} />

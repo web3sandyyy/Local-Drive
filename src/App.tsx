@@ -3,6 +3,7 @@ import Sidebar from "./components/Sidebar";
 import FileCard from "./components/FileCard";
 import FolderCard from "./components/FolderCard";
 import useDrive from "./store/hooks/useDrive";
+import { ItemKind } from "./types";
 
 function App() {
   const { files } = useDrive();
@@ -20,7 +21,7 @@ function App() {
           <div className="flex-grow overflow-scroll rounded-b-lg ">
             <div className="w-full min-h-fit mt-2 p-2  md:px-4 grid gap-2 md:gap-4 grid-cols-2 md:grid-cols-3  lg:grid-cols-4 overflow-auto ">
               {files.map((file, index) =>
-                file.itemKind === "file" ? (
+                file.itemKind === ItemKind.FILE ? (
                   <FileCard key={index} file={file} />
                 ) : (
                   <FolderCard key={index} folder={file} />

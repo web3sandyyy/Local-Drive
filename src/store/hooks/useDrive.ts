@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { FileData, DriveItem } from "../../types";
+import { FileData, DriveItem, ItemKind } from "../../types";
 import { addSingleFile, addMultipleFiles, deleteSingleFile, deleteAllFiles, renameFile } from "../slices/driveSlice";
 
 const useDrive = () => {
@@ -22,8 +22,8 @@ const useDrive = () => {
     dispatch(deleteAllFiles());
   };
 
-  const editFileName = (fileId: string, newName: string) => {
-    dispatch(renameFile({ id: fileId, name: newName }));
+  const editFileName = (fileId: string, newName: string, path: string, itemKind: ItemKind) => {
+    dispatch(renameFile({ id: fileId, name: newName, path, itemKind }));
   };
 
   return {

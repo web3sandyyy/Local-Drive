@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import upload from "../assets/icons/upload.svg";
 import plus from "../assets/icons/plus.svg";
 import { motion, AnimatePresence } from "framer-motion";
-import { FileData } from "../types";
+import { FileData, ItemKind } from "../types";
 import useDrive from "../store/hooks/useDrive";
 import { v4 as uuidv4 } from "uuid";
 import { DriveItem, FolderData } from "../types";
@@ -34,7 +34,7 @@ const UploadButton = () => {
           size: file.size,
           lastModified: file.lastModified,
           content: content,
-          itemKind: "file",
+          itemKind: ItemKind.FILE,
           path: path,
         };
         resolve(fileData);
@@ -66,9 +66,8 @@ const UploadButton = () => {
         if (!isLast && !folderMap.has(currentPath)) {
           const folderData: FolderData = {
             id: uuidv4(),
-            folderName: currentPath,
             name: part,
-            itemKind: "folder",
+            itemKind: ItemKind.FOLDER,
             lastModified: Date.now(),
             children: [],
             path: currentPath,
