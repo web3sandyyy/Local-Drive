@@ -1,9 +1,10 @@
 import { useRef, useState } from "react";
 import upload from "../assets/icons/upload.svg";
 import plus from "../assets/icons/plus.svg";
+import useDrive from "../store/hooks/useDrive";
+import useDirectory from "../store/hooks/useDirectory";
 import { motion, AnimatePresence } from "framer-motion";
 import { FileData, ItemKind } from "../types";
-import useDrive from "../store/hooks/useDrive";
 import { v4 as uuidv4 } from "uuid";
 import { DriveItem, FolderData } from "../types";
 
@@ -17,6 +18,7 @@ const UploadButton = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { addNewSingleFile, addNewMultipleFiles } = useDrive();
+  const { directory } = useDirectory();
 
   const handleFileRead = async (
     file: File,
@@ -127,10 +129,10 @@ const UploadButton = () => {
       }
 
       if (fileDataArray.length === 1 && !fileDataArray[0].path) {
-        addNewSingleFile(fileDataArray[0]);
+        addNewSingleFile({ file: fileDataArray[0], path: directory });
       } else {
         const organizedStructure = createFolderStructure(fileDataArray);
-        addNewMultipleFiles(organizedStructure);
+        addNewMultipleFiles({ folder: organizedStructure, path: directory });
       }
     } catch (error) {
       console.error("Error storing files", error);
@@ -144,7 +146,7 @@ const UploadButton = () => {
     <div>
       <div
         onClick={() => setShowUpload(!showUpload)}
-        className={`mt-2 md:mt-4 cursor-pointer flex items-center  hover:bg-gray-100 duration-100 transition-all  border p-4  rounded-lg ${
+        className={`mt-2 md:mt-4 cursor-pointer flex items-center  hover:bg-gray-100 active:bg-gray-100 duration-100 transition-all  border p-4  rounded-lg ${
           showUpload
             ? "border-b-0 rounded-b-none bg-gray-100"
             : "shadow-md bg-white "
@@ -194,7 +196,7 @@ const UploadButton = () => {
             className="text-base flex flex-col divide-y border rounded-b-lg overflow-hidden  bg-white"
           >
             <div className="w-full p-2 ">
-              <div className="relative hover:bg-gray-200 duration-200 rounded-lg  ">
+              <div className="relative hover:bg-gray-200 active:bg-gray-200 duration-200 rounded-lg  ">
                 <p className="p-2">Upload file</p>
                 <input
                   type="file"
@@ -206,7 +208,7 @@ const UploadButton = () => {
                 />
               </div>
 
-              <div className="relative w-full hover:bg-gray-200 duration-200 rounded-lg ">
+              <div className="relative w-full hover:bg-gray-200 active:bg-gray-200 duration-200 rounded-lg ">
                 <p className="p-2">Upload folder</p>
                 <input
                   type="file"

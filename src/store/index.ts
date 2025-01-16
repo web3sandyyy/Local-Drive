@@ -1,7 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
 import driveReducer from "./slices/driveSlice";
-import localforage from 'localforage';
+import directoryReducer from "./slices/directorySlice";
+import localforage from "localforage";
 
 const persistConfig = {
   key: "root",
@@ -13,6 +14,7 @@ const persistedReducer = persistReducer(persistConfig, driveReducer);
 const store = configureStore({
   reducer: {
     drive: persistedReducer,
+    directory: directoryReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

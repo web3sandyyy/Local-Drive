@@ -7,6 +7,8 @@ import rename from "../assets/icons/rename.svg";
 import { FolderData, ItemKind } from "../types";
 import FileCard from "./FileCard";
 import useDrive from "../store/hooks/useDrive";
+import useDirectory from "../store/hooks/useDirectory";
+import angle from "../assets/icons/angle.svg";
 
 const FolderCard = ({ folder }: { folder: FolderData }) => {
   const [showMore, setShowMore] = useState(false);
@@ -15,11 +17,12 @@ const FolderCard = ({ folder }: { folder: FolderData }) => {
   const [showRename, setShowRename] = useState(false);
 
   const { delItem, editFileName } = useDrive();
+  const { directory, pushNewDirectory, popPreviousDirectory } = useDirectory();
 
   const handleNameUpdate = () => {
     const id = folder.id;
     const name = newName;
-    editFileName({id , name, path: folder.path, itemKind: folder.itemKind});
+    editFileName({ id, name, path: folder.path, itemKind: folder.itemKind });
     setShowRename(false);
     setShowMore(false);
   };
@@ -27,7 +30,13 @@ const FolderCard = ({ folder }: { folder: FolderData }) => {
   return (
     <>
       <div className="w-full relative">
-        <div onClick={() => setShowFiles(true)} className="w-full relative">
+        <div
+          onClick={() => {
+            setShowFiles(true);
+            pushNewDirectory(folder.name);
+          }}
+          className="w-full relative"
+        >
           <div className="w-full aspect-square rounded-2xl  md:rounded-3xl flex items-end">
             <div className="h-full w-1/2 bg-gray-200 rounded-l-2xl rounded-tr-2xl md:rounded-l-3xl md:rounded-tr-3xl"></div>
 
@@ -81,7 +90,7 @@ const FolderCard = ({ folder }: { folder: FolderData }) => {
                 ) : (
                   <div
                     onClick={() => setShowRename(true)}
-                    className="flex items-center hover:bg-gray-200 hover:rounded-md"
+                    className="flex items-center hover:bg-gray-200 hover:rounded-md active:bg-gray-200 active:rounded-md"
                   >
                     <p className="p-1 ">Rename</p>
                     <img src={rename} alt="rename" className="w-4 h-4" />
@@ -89,8 +98,8 @@ const FolderCard = ({ folder }: { folder: FolderData }) => {
                 )}
 
                 <div
-                  onClick={() => delItem({id: folder.id, path: folder.path})}
-                  className="flex items-center hover:bg-gray-200 hover:rounded-md"
+                  onClick={() => delItem({ id: folder.id, path: folder.path })}
+                  className="flex items-center hover:bg-gray-200 hover:rounded-md active:bg-gray-200 active:rounded-md"
                 >
                   <p className="p-1 text-red-600">Delete</p>
                   <img src={dustbin} alt="delete" className="w-5 h-5" />
@@ -144,13 +153,24 @@ const FolderCard = ({ folder }: { folder: FolderData }) => {
       </div>
 
       {showFiles && (
-        <div className="absolute z-10 bottom-0 right-0 h-full w-full bg-white flex flex-col rounded-lg">
-          <p
-            onClick={() => setShowFiles(false)}
-            className=" w-fit font-semibold p-2 px-4 bg-gray-200 rounded-lg mt-2 ml-4"
-          >
-            Back
-          </p>
+        <div className="absolute z-10 top-0 bottom-0 right-0 h-full w-full bg-white flex flex-col rounded-lg">
+          <div className="w-full pl-2 flex border-b items-center">
+            <motion.div
+              initial={{ width: "0%" }}
+              animate={{ width: "auto" }}
+              exit={{ width: "0%" }}
+              transition={{ duration: 0.2 }}
+              onClick={() => {
+                setShowFiles(false);
+                popPreviousDirectory();
+              }}
+              className="flex items-center w-fit h-fit font-semibold  gap-1 bg-gray-200 rounded-lg p-1 overflow-hidden"
+            >
+              <img src={angle} alt="angle" className="w-4 h-4 ml-2" />
+              <p className="text-sm  pr-3">Back</p>
+            </motion.div>
+            <p className="text-sm font-semibold p-2">Sort by Name</p>
+          </div>
 
           <div className="flex-grow w-full relative p-2  md:px-4 grid gap-2 md:gap-4 grid-cols-2 md:grid-cols-3  lg:grid-cols-4 overflow-auto bg-white">
             {folder.children.map((file, index) =>

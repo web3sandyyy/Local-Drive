@@ -32,6 +32,10 @@ export interface DriveState {
   files: DriveItem[];
 }
 
+export interface DirectoryState {
+  directory: string[];
+}
+
 export interface RenameFileProps {
   id: string;
   name: string;

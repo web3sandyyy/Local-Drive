@@ -78,7 +78,7 @@ const FileCard = ({ file }: { file: FileData }) => {
               ) : (
                 <div
                   onClick={() => setShowRename(true)}
-                  className="flex items-center hover:bg-gray-200 hover:rounded-md"
+                  className="flex items-center hover:bg-gray-200 hover:rounded-md active:bg-gray-200 active:rounded-md"
                 >
                   <p className="p-1 ">Rename</p>
                   <img src={rename} alt="rename" className="w-4 h-4" />
@@ -87,7 +87,7 @@ const FileCard = ({ file }: { file: FileData }) => {
 
               <div
                 onClick={() => delItem({ id: file.id, path: file.path })}
-                className="flex items-center hover:bg-gray-200 hover:rounded-md"
+                className="flex items-center hover:bg-gray-200 hover:rounded-md active:bg-gray-200 active:rounded-md"
               >
                 <p className="p-1 text-red-600">Delete</p>
                 <img src={dustbin} alt="delete" className="w-5 h-5" />

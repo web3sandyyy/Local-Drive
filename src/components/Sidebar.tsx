@@ -4,9 +4,11 @@ import CreateButton from "./CreateButton";
 import UploadButton from "./UploadButton";
 import menu from "../assets/icons/menu.svg";
 import { AnimatePresence, motion } from "framer-motion";
+import useDirectory from "../store/hooks/useDirectory";
 
 const Sidebar = () => {
   const [showMenu, setShowMenu] = useState(false);
+  const { directory } = useDirectory();
   return (
     <>
       <div className="hidden md:inline h-screen min-w-[150px] max-w-[250px] w-[30%] bg-gray-200">
@@ -18,6 +20,7 @@ const Sidebar = () => {
         <div className="mt-4 ml-4 text-lg flex flex-col shadow-bottom-only overflow-hidden rounded-lg">
           <CreateButton />
           <UploadButton />
+          <p onClick={() => console.log(directory)}>director</p>
         </div>
       </div>
 

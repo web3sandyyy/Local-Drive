@@ -11,18 +11,23 @@ import {
   deleteItem,
   deleteAllFiles,
   renameFile,
+  createFolder
 } from "../slices/driveSlice";
 
 const useDrive = () => {
   const dispatch = useAppDispatch();
   const { files } = useAppSelector((state) => state.drive);
 
-  const addNewSingleFile = (newFile: FileData) => {
-    dispatch(addSingleFile(newFile));
+  const addNewSingleFile = ({file, path} : {file: FileData, path: string[]}) => {
+    dispatch(addSingleFile({ file, path }));
   };
 
-  const addNewMultipleFiles = (newFile: DriveItem[]) => {
-    dispatch(addMultipleFiles(newFile));
+  const addNewMultipleFiles = ({folder, path} : {folder: DriveItem[], path: string[]}) => {
+    dispatch(addMultipleFiles({ folder, path }));
+  };
+
+  const createNewFolder = ({path, name} : {path: string[], name: string}) => {
+    dispatch(createFolder({ name, path }));
   };
 
   const delItem = ({ id, path }: DeleteItemProps) => {
@@ -41,6 +46,7 @@ const useDrive = () => {
     files,
     addNewSingleFile,
     addNewMultipleFiles,
+    createNewFolder,
     delItem,
     delAllFiles,
     editFileName,
