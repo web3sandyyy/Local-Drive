@@ -153,33 +153,55 @@ const FolderCard = ({ folder }: { folder: FolderData }) => {
       </div>
 
       {showFiles && (
-        <div className="absolute z-10 top-0 bottom-0 right-0 h-full w-full bg-white flex flex-col rounded-lg">
-          <div className="w-full pl-2 flex border-b items-center">
-            <motion.div
-              initial={{ width: "0%" }}
-              animate={{ width: "auto" }}
-              exit={{ width: "0%" }}
-              transition={{ duration: 0.2 }}
-              onClick={() => {
-                setShowFiles(false);
-                popPreviousDirectory();
-              }}
-              className="flex items-center w-fit h-fit font-semibold  gap-1 bg-gray-200 rounded-lg p-1 overflow-hidden"
-            >
-              <img src={angle} alt="angle" className="w-4 h-4 ml-2" />
-              <p className="text-sm  pr-3">Back</p>
-            </motion.div>
-            <p className="text-sm font-semibold p-2">Sort by Name</p>
-          </div>
+        <div className="absolute z-10 top-0 bottom-0 right-0 max-h-full h-full w-full overflow-auto bg-white flex flex-col rounded-lg">
+          <div className="h-full w-full ">
+            <div className="w-full pl-2 flex border-b items-center justify-between">
+              <div className="flex items-center gap-2">
+                <motion.div
+                  initial={{ width: "0%" }}
+                  animate={{ width: "auto" }}
+                  exit={{ width: "0%" }}
+                  transition={{ duration: 0.2 }}
+                  onClick={() => {
+                    setShowFiles(false);
+                    popPreviousDirectory();
+                  }}
+                  className="flex items-center w-fit h-fit font-semibold  gap-1 bg-gray-200 rounded-lg p-1 overflow-hidden"
+                >
+                  <img src={angle} alt="angle" className="w-4 h-4 ml-2" />
+                  <p className="text-sm  pr-3">Back</p>
+                </motion.div>
 
-          <div className="flex-grow w-full relative p-2  md:px-4 grid gap-2 md:gap-4 grid-cols-2 md:grid-cols-3  lg:grid-cols-4 overflow-auto bg-white">
-            {folder.children.map((file, index) =>
-              file.itemKind === ItemKind.FILE ? (
-                <FileCard key={index} file={file} />
-              ) : (
-                <FolderCard key={index} folder={file} />
-              )
-            )}
+                {directory.length > 0 && (
+                  <div className="flex items-center border-2 px-2 rounded-md">
+                    {directory.map((dir, index) => (
+                      <div className="flex items-center" key={index}>
+                        <p>{dir}</p>
+                        {index < directory.length - 1 && (
+                          <img
+                            src={angle}
+                            alt="angle"
+                            className="w-4 h-4 rotate-180 mx-1"
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <p className="text-sm font-semibold p-2 ">Sort by Name</p>
+            </div>
+
+            <div className="flex-grow w-full h-full relative p-2  md:px-4 grid gap-2 md:gap-4 grid-cols-2 md:grid-cols-3  lg:grid-cols-4 overflow-auto bg-white">
+              {folder.children.map((file, index) =>
+                file.itemKind === ItemKind.FILE ? (
+                  <FileCard key={index} file={file} />
+                ) : (
+                  <FolderCard key={index} folder={file} />
+                )
+              )}
+            </div>
           </div>
         </div>
       )}

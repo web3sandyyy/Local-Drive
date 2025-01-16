@@ -15,7 +15,7 @@ function App() {
       <div className="w-full md:h-screen h-[calc(100vh-48px)] p-2 pt-0 md:pt-4 md:p-4 bg-gray-200">
         <div className="w-full h-full rounded-lg bg-white flex flex-col relative">
           <div className="w-full h-fit px-2">
-            <p className="text-sm font-semibold border-b p-2">Sort by Name</p>
+            <p className="text-sm font-semibold border-b p-2 text-right">Sort by Name</p>
           </div>
 
           <div className="flex-grow overflow-scroll rounded-b-lg ">
