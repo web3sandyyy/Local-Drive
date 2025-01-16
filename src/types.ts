@@ -26,3 +26,20 @@ export interface FolderData extends BaseItem {
 }
 
 export type DriveItem = FileData | FolderData;
+
+// Reducer types
+export interface DriveState {
+  files: DriveItem[];
+}
+
+export interface RenameFileProps {
+  id: string;
+  name: string;
+  path: string;
+  itemKind: ItemKind;
+}
+
+export interface DeleteItemProps {
+  id: string;
+  path: string;
+}

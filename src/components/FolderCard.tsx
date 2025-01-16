@@ -14,12 +14,12 @@ const FolderCard = ({ folder }: { folder: FolderData }) => {
   const [newName, setNewName] = useState(folder.name);
   const [showRename, setShowRename] = useState(false);
 
-  const { delSingleFile, editFileName } = useDrive();
+  const { delItem, editFileName } = useDrive();
 
   const handleNameUpdate = () => {
     const id = folder.id;
     const name = newName;
-    editFileName(id, name, folder.path, folder.itemKind);
+    editFileName({id , name, path: folder.path, itemKind: folder.itemKind});
     setShowRename(false);
     setShowMore(false);
   };
@@ -89,7 +89,7 @@ const FolderCard = ({ folder }: { folder: FolderData }) => {
                 )}
 
                 <div
-                  onClick={() => delSingleFile(folder.id)}
+                  onClick={() => delItem({id: folder.id, path: folder.path})}
                   className="flex items-center hover:bg-gray-200 hover:rounded-md"
                 >
                   <p className="p-1 text-red-600">Delete</p>

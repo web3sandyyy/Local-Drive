@@ -10,10 +10,15 @@ const FileCard = ({ file }: { file: FileData }) => {
   const [showMore, setShowMore] = useState(false);
   const [showRename, setShowRename] = useState(false);
   const [newName, setNewName] = useState(file.name);
-  const { delSingleFile, editFileName } = useDrive();
+  const { delItem, editFileName } = useDrive();
 
   const handleNameUpdate = () => {
-    editFileName(file.id, newName, file.path, file.itemKind);
+    editFileName({
+      id: file.id,
+      name: newName,
+      path: file.path,
+      itemKind: file.itemKind,
+    });
     setShowRename(false);
     setShowMore(false);
   };
@@ -81,7 +86,7 @@ const FileCard = ({ file }: { file: FileData }) => {
               )}
 
               <div
-                onClick={() => delSingleFile(file.id)}
+                onClick={() => delItem({ id: file.id, path: file.path })}
                 className="flex items-center hover:bg-gray-200 hover:rounded-md"
               >
                 <p className="p-1 text-red-600">Delete</p>

@@ -1,16 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { DriveItem, FileData, FolderData, ItemKind } from "../../types";
-
-interface DriveState {
-  files: DriveItem[];
-}
-
-interface RenameFileProps {
-  id: string;
-  name: string;
-  path: string;
-  itemKind: ItemKind;
-}
+import {
+  DeleteItemProps,
+  DriveItem,
+  DriveState,
+  FileData,
+  FolderData,
+  ItemKind,
+  RenameFileProps,
+} from "../../types";
 
 const initialState: DriveState = {
   files: [],
@@ -28,13 +25,29 @@ const driveSlice = createSlice({
       state.files.push(...action.payload);
     },
 
-    deleteSingleFile(state, action: PayloadAction<string>) {
-      const index = state.files.findIndex((file) => file.id === action.payload);
-      if (index === -1) {
-        console.log("File not found");
-        return;
-      }
-      state.files.splice(index, 1);
+    deleteItem(state, action: PayloadAction<DeleteItemProps>) {
+      const { id, path } = action.payload;
+
+      const deleteRecursively = (items: DriveItem[]): DriveItem[] => {
+        return items
+          .map((item) => {
+            if (item.id === id && item.path === path) {
+              return null;
+            }
+
+            if (item.itemKind === ItemKind.FOLDER) {
+              return {
+                ...item,
+                children: deleteRecursively(item.children),
+              } as FolderData;
+            }
+
+            return item;
+          })
+          .filter((item) => item !== null);
+      };
+
+      state.files = deleteRecursively(state.files);
     },
 
     deleteAllFiles(state) {
@@ -109,7 +122,7 @@ const driveSlice = createSlice({
 export const {
   addSingleFile,
   addMultipleFiles,
-  deleteSingleFile,
+  deleteItem,
   deleteAllFiles,
   renameFile,
 } = driveSlice.actions;
