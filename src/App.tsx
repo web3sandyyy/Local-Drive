@@ -10,7 +10,7 @@ import { useState } from "react";
 function App() {
   const [showMenu, setShowMenu] = useState(false);
 
-   const toggleMenu = () => {
+  const toggleMenu = () => {
     setShowMenu((prev) => !prev);
   };
 
@@ -24,7 +24,7 @@ function App() {
         <div className="w-full h-full rounded-lg bg-white flex flex-col relative">
           <div className="w-full h-fit px-2">
             <p className="text-sm font-semibold border-b p-2 text-right">
-              Sort by Name
+              {files && files.length && `Total: ${files.length}`}
             </p>
           </div>
 
@@ -58,7 +58,6 @@ function App() {
           </div>
         </div>
       </div>
-
     </div>
   );
 }

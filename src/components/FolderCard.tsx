@@ -18,7 +18,7 @@ const FolderCard = ({ folder }: { folder: FolderData }) => {
 
   return (
     <>
-      <div className="w-full h-fit relative">
+      <div className="w-full h-fit relative overflow-hidden">
         <div
           onDoubleClick={() => {
             setShowFiles(true);
@@ -71,7 +71,7 @@ const FolderCard = ({ folder }: { folder: FolderData }) => {
       {showFiles && (
         <div className="absolute z-10 top-0 bottom-0 right-0 max-h-full w-full  bg-white flex flex-col rounded-lg">
           <div className="h-full w-full flex flex-col rounded-b-lg">
-            <div className="w-full pl-2 flex border-b items-center justify-between">
+            <div className="w-full p-2 pl-2 flex border-b items-center justify-between">
               <div className="flex items-center gap-2">
                 <motion.div
                   initial={{ width: "0%" }}
@@ -89,7 +89,7 @@ const FolderCard = ({ folder }: { folder: FolderData }) => {
                 </motion.div>
 
                 {directory.length > 0 && (
-                  <div className="flex items-center border-2 px-2 rounded-md">
+                  <div className="flex items-center border-2 px-2 rounded-md flex-wrap">
                     {directory.map((dir, index) => (
                       <div className="flex items-center" key={index}>
                         <p>{dir}</p>
@@ -106,7 +106,6 @@ const FolderCard = ({ folder }: { folder: FolderData }) => {
                 )}
               </div>
 
-              <p className="text-sm font-semibold p-2 ">Sort by Name</p>
             </div>
 
             <div
@@ -115,7 +114,7 @@ const FolderCard = ({ folder }: { folder: FolderData }) => {
               }}
               className="flex-grow w-full  p-2  md:px-4  overflow-auto bg-white rounded-b-lg"
             >
-              {folder.children.length > 1 ? (
+              {folder.children.length > 0 ? (
                 <div className="h-fit w-full grid gap-2 md:gap-4 grid-cols-2 md:grid-cols-3  lg:grid-cols-4">
                   {folder.children.map((file, index) =>
                     file.itemKind === ItemKind.FILE ? (
