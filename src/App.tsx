@@ -45,11 +45,12 @@ function App() {
                   <img src={emptyIcon} className="object-scale-down" />
                   <p className="text-center text-lg md:text-xl font-bold">
                     No files found,{" "}
+                    <span className="hidden md:inline">Try adding!</span>
                     <span
                       onClick={toggleMenu}
                       className="p-2 px-3 bg-gray-200 rounded md:hidden"
                     >
-                      Add
+                      Add!
                     </span>
                   </p>
                 </div>
