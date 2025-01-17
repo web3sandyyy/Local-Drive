@@ -1,42 +1,18 @@
-import { formatTimestampToDate } from "../helper";
-
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import dustbin from "../assets/icons/dustbin.svg";
-import rename from "../assets/icons/rename.svg";
 import { FolderData, ItemKind } from "../types";
 import FileCard from "./FileCard";
-import useDrive from "../store/hooks/useDrive";
 import useDirectory from "../store/hooks/useDirectory";
 import angle from "../assets/icons/angle.svg";
-import toast from "react-hot-toast";
+import ShowMoreData from "./ShowMoreData";
 
 const FolderCard = ({ folder }: { folder: FolderData }) => {
   const [showMore, setShowMore] = useState(false);
   const [showFiles, setShowFiles] = useState(false);
-  const [newName, setNewName] = useState(folder.name);
-  const [showRename, setShowRename] = useState(false);
-
-  const { delItem, editFileName } = useDrive();
   const { directory, pushNewDirectory, popPreviousDirectory } = useDirectory();
 
-  const handleNameUpdate = () => {
-    if (!newName) {
-      toast.dismiss();
-      toast.error("Please enter a name");
-      return;
-    }
 
-    if (folder.name === newName) {
-      toast.dismiss();
-      toast.error("Please change the name");
-      return;
-    }
-
-    const id = folder.id;
-    const name = newName;
-    editFileName({ id, name, path: folder.path, itemKind: folder.itemKind });
-    setShowRename(false);
+  const handleClose = () => {
     setShowMore(false);
   };
 
@@ -45,6 +21,10 @@ const FolderCard = ({ folder }: { folder: FolderData }) => {
       <div className="w-full h-fit relative">
         <div
           onDoubleClick={() => {
+            setShowFiles(true);
+            pushNewDirectory(folder.name);
+          }}
+          onTouchStart={() => {
             setShowFiles(true);
             pushNewDirectory(folder.name);
           }}
@@ -84,90 +64,13 @@ const FolderCard = ({ folder }: { folder: FolderData }) => {
         </div>
 
         <AnimatePresence mode="wait">
-          {showMore && (
-            <motion.div
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              exit={{ y: "100%" }}
-              transition={{ duration: 0.2 }}
-              className="md:absolute fixed z-10 bottom-0 right-0 w-full h-fit bg-gray-200 md:bg-white border border-white md:border-gray-200 rounded-b-lg"
-            >
-              <div className="w-full p-2 flex flex-col divide-y-2 divide-white md:divide-gray-200 ">
-                {showRename ? (
-                  <input
-                    type="text"
-                    value={newName}
-                    onChange={(e) => setNewName(e.target.value)}
-                    className="w-full p-1 text-sm font-semibold border rounded-md mb-1"
-                  />
-                ) : (
-                  <div
-                    onClick={() => setShowRename(true)}
-                    className="flex items-center hover:bg-gray-200 hover:rounded-md active:bg-gray-200 active:rounded-md"
-                  >
-                    <p className="p-1 ">Rename</p>
-                    <img src={rename} alt="rename" className="w-4 h-4" />
-                  </div>
-                )}
-
-                <div
-                  onClick={() => delItem({ id: folder.id, path: folder.path })}
-                  className="flex items-center hover:bg-gray-200 hover:rounded-md active:bg-gray-200 active:rounded-md"
-                >
-                  <p className="p-1 text-red-600">Delete</p>
-                  <img src={dustbin} alt="delete" className="w-5 h-5" />
-                </div>
-
-                <div className="text-sm px-1 pt-1">
-                  <p>Details</p>
-                  <div className="text-gray-500">
-                    <p>Name : {folder.name}</p>
-                    <p>
-                      Last Modified :{" "}
-                      {folder.lastModified &&
-                        formatTimestampToDate(folder.lastModified)}
-                    </p>
-                    {folder.path && <p>Path : {folder.path}</p>}
-                  </div>
-                </div>
-              </div>
-              {showRename ? (
-                <div className="flex rounded-b-lg">
-                  <button
-                    onClick={() => handleNameUpdate()}
-                    className="w-full text-center p-2 md:p-1 text-sm font-semibold bg-green-500 rounded-bl-lg"
-                  >
-                    Save
-                  </button>
-                  <button
-                    onClick={() => {
-                      setShowRename(false);
-                      setShowMore(false);
-                    }}
-                    className="w-full text-center p-2 md:p-1 text-sm font-semibold bg-red-500 rounded-br-lg"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              ) : (
-                <button
-                  className="bg-white md:bg-gray-200 w-full p-2 md:p-1 text-sm font-semibold rounded-b-lg"
-                  onClick={() => {
-                    setShowRename(false);
-                    setShowMore(false);
-                  }}
-                >
-                  Close
-                </button>
-              )}
-            </motion.div>
-          )}
+          {showMore && <ShowMoreData item={folder} onClose={handleClose} />}
         </AnimatePresence>
       </div>
 
       {showFiles && (
-        <div className="absolute z-10 top-0 bottom-0 right-0 max-h-full h-full w-full overflow-auto bg-white flex flex-col rounded-lg" >
-          <div className="h-full w-full flex flex-col">
+        <div className="absolute z-10 top-0 bottom-0 right-0 max-h-full w-full  bg-white flex flex-col rounded-lg">
+          <div className="h-full w-full flex flex-col rounded-b-lg">
             <div className="w-full pl-2 flex border-b items-center justify-between">
               <div className="flex items-center gap-2">
                 <motion.div
@@ -206,14 +109,21 @@ const FolderCard = ({ folder }: { folder: FolderData }) => {
               <p className="text-sm font-semibold p-2 ">Sort by Name</p>
             </div>
 
-            <div style={{position: directory[-1] === folder.name ? "relative" : "static"}} className="flex-grow w-full h-full p-2  md:px-4 grid gap-2 md:gap-4 grid-cols-2 md:grid-cols-3  lg:grid-cols-4 overflow-auto bg-white">
-              {folder.children.map((file, index) =>
-                file.itemKind === ItemKind.FILE ? (
-                  <FileCard key={index} file={file} />
-                ) : (
-                  <FolderCard key={index} folder={file} />
-                )
-              )}
+            <div
+              style={{
+                position: directory[-1] === folder.name ? "relative" : "static",
+              }}
+              className="flex-grow w-full  p-2  md:px-4  overflow-auto bg-white rounded-b-lg"
+            >
+              <div className="h-fit w-full grid gap-2 md:gap-4 grid-cols-2 md:grid-cols-3  lg:grid-cols-4">
+                {folder.children.map((file, index) =>
+                  file.itemKind === ItemKind.FILE ? (
+                    <FileCard key={index} file={file} />
+                  ) : (
+                    <FolderCard key={index} folder={file} />
+                  )
+                )}
+              </div>
             </div>
           </div>
         </div>

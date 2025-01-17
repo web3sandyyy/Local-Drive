@@ -1,40 +1,12 @@
 import { useState } from "react";
 import { FileData } from "../types";
-import dustbin from "../assets/icons/dustbin.svg";
-import rename from "../assets/icons/rename.svg";
-import { formatFileSize, formatTimestampToDate } from "../helper";
-import { motion, AnimatePresence } from "framer-motion";
-import useDrive from "../store/hooks/useDrive";
-import toast from "react-hot-toast";
+import { AnimatePresence } from "framer-motion";
+import ShowMoreData from "./ShowMoreData";
 
 const FileCard = ({ file }: { file: FileData }) => {
   const [showMore, setShowMore] = useState(false);
-  const [showRename, setShowRename] = useState(false);
-  const [newName, setNewName] = useState(file.name);
-  const { delItem, editFileName } = useDrive();
 
-  const handleNameUpdate = () => {
-    if (!newName) {
-      toast.dismiss();
-      toast.error("Please enter a name");
-      return;
-    }
-
-    if (file.name === newName) {
-      toast.dismiss();
-      toast.error("Please change the name");
-      return;
-    }
-    
-    editFileName({
-      id: file.id,
-      name: newName,
-      path: file.path,
-      itemKind: file.itemKind,
-    });
-    toast.dismiss();
-    toast.success("File renamed successfully");
-    setShowRename(false);
+  const handleClose = () => {
     setShowMore(false);
   };
 
@@ -49,7 +21,6 @@ const FileCard = ({ file }: { file: FileData }) => {
             onClick={() => {
               if (showMore) {
                 setShowMore(false);
-                setShowRename(false);
               }
             }}
           />
@@ -74,86 +45,7 @@ const FileCard = ({ file }: { file: FileData }) => {
       </div>
 
       <AnimatePresence mode="wait">
-        {showMore && (
-          <motion.div
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={{ duration: 0.2 }}
-            className="md:absolute fixed z-10 bottom-0 right-0 w-full h-fit bg-gray-200 md:bg-white border border-white md:border-gray-200 rounded-b-lg max-h-full overflow-auto"
-          >
-            <div className="w-full p-2 flex flex-col divide-y-2 divide-white md:divide-gray-200 ">
-              {showRename ? (
-                <input
-                  type="text"
-                  value={newName}
-                  onChange={(e) => setNewName(e.target.value)}
-                  className="w-full p-1 text-sm font-semibold border rounded-md mb-1"
-                />
-              ) : (
-                <div
-                  onClick={() => setShowRename(true)}
-                  className="flex items-center hover:bg-gray-200 hover:rounded-md active:bg-gray-200 active:rounded-md"
-                >
-                  <p className="p-1 ">Rename</p>
-                  <img src={rename} alt="rename" className="w-4 h-4" />
-                </div>
-              )}
-
-              <div
-                onClick={() => delItem({ id: file.id, path: file.path })}
-                className="flex items-center hover:bg-gray-200 hover:rounded-md active:bg-gray-200 active:rounded-md"
-              >
-                <p className="p-1 text-red-600">Delete</p>
-                <img src={dustbin} alt="delete" className="w-5 h-5" />
-              </div>
-
-              <div className="text-sm px-1 pt-1">
-                <p>Details</p>
-                <div className="text-gray-500">
-                  <p>Name : {file.name}</p>
-                  <p>Type : {file.fileType || "Unknown"}</p>
-                  <p>Size : {file.size && formatFileSize(file.size)}</p>
-                  {file.path && <p>Path : {file.path}</p>}
-                  <p>
-                    Last Modified :{" "}
-                    {file.lastModified &&
-                      formatTimestampToDate(file.lastModified)}
-                  </p>
-                </div>
-              </div>
-            </div>
-            {showRename ? (
-              <div className="flex rounded-b-lg">
-                <button
-                  onClick={() => handleNameUpdate()}
-                  className="w-full text-center p-2 md:p-1 text-sm font-semibold bg-green-500 rounded-bl-lg"
-                >
-                  Save
-                </button>
-                <button
-                  onClick={() => {
-                    setShowRename(false);
-                    setShowMore(false);
-                  }}
-                  className="w-full text-center p-2 md:p-1 text-sm font-semibold bg-red-500 rounded-br-lg"
-                >
-                  Cancel
-                </button>
-              </div>
-            ) : (
-              <button
-                className="bg-white md:bg-gray-200 w-full p-2 md:p-1 text-sm font-semibold rounded-b-lg"
-                onClick={() => {
-                  setShowRename(false);
-                  setShowMore(false);
-                }}
-              >
-                Close
-              </button>
-            )}
-          </motion.div>
-        )}
+        {showMore && <ShowMoreData item={file} onClose={handleClose} />}
       </AnimatePresence>
     </div>
   );
