@@ -5,12 +5,12 @@ import FileCard from "./FileCard";
 import useDirectory from "../store/hooks/useDirectory";
 import angle from "../assets/icons/angle.svg";
 import ShowMoreData from "./ShowMoreData";
+import emptyIcon from "../assets/emptyFolder.png";
 
 const FolderCard = ({ folder }: { folder: FolderData }) => {
   const [showMore, setShowMore] = useState(false);
   const [showFiles, setShowFiles] = useState(false);
   const { directory, pushNewDirectory, popPreviousDirectory } = useDirectory();
-
 
   const handleClose = () => {
     setShowMore(false);
@@ -115,15 +115,26 @@ const FolderCard = ({ folder }: { folder: FolderData }) => {
               }}
               className="flex-grow w-full  p-2  md:px-4  overflow-auto bg-white rounded-b-lg"
             >
-              <div className="h-fit w-full grid gap-2 md:gap-4 grid-cols-2 md:grid-cols-3  lg:grid-cols-4">
-                {folder.children.map((file, index) =>
-                  file.itemKind === ItemKind.FILE ? (
-                    <FileCard key={index} file={file} />
-                  ) : (
-                    <FolderCard key={index} folder={file} />
-                  )
-                )}
-              </div>
+              {folder.children.length > 1 ? (
+                <div className="h-fit w-full grid gap-2 md:gap-4 grid-cols-2 md:grid-cols-3  lg:grid-cols-4">
+                  {folder.children.map((file, index) =>
+                    file.itemKind === ItemKind.FILE ? (
+                      <FileCard key={index} file={file} />
+                    ) : (
+                      <FolderCard key={index} folder={file} />
+                    )
+                  )}
+                </div>
+              ) : (
+                <div className="h-full w-full flex justify-center items-center">
+                  <div className="w-4/5 max-w-[300px]">
+                    <img src={emptyIcon} className="object-scale-down" />
+                    <p className="text-center text-lg md:text-xl font-bold">
+                      No files found
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
