@@ -4,8 +4,13 @@ import { FileData, FolderData, ItemKind } from "../types";
 import useDrive from "../store/hooks/useDrive";
 import toast from "react-hot-toast";
 import dustbin from "../assets/icons/dustbin.svg";
+import download from "../assets/icons/download.svg";
 import rename from "../assets/icons/rename.svg";
-import { formatFileSize, formatTimestampToDate } from "../helper";
+import {
+  downloadDriveItem,
+  formatFileSize,
+  formatTimestampToDate,
+} from "../helper";
 
 interface ShowMoreDataProps {
   item: FileData | FolderData;
@@ -41,6 +46,10 @@ const ShowMoreData = ({ item, onClose }: ShowMoreDataProps) => {
     onClose();
   };
 
+  const handleDownload = async () => {
+    await downloadDriveItem(item);
+  };
+
   return (
     <motion.div
       initial={{ y: "100%" }}
@@ -63,17 +72,24 @@ const ShowMoreData = ({ item, onClose }: ShowMoreDataProps) => {
             onClick={() => setShowRename(true)}
             className="flex items-center hover:bg-gray-200 hover:rounded-md active:bg-gray-200 active:rounded-md"
           >
+            <img src={rename} alt="rename" className="w-5 h-5 p-[2px]" />
             <p className="p-1 ">Rename</p>
-            <img src={rename} alt="rename" className="w-4 h-4" />
           </div>
         )}
+        <div
+          onClick={() => handleDownload()}
+          className="flex items-center hover:bg-gray-200 hover:rounded-md active:bg-gray-200 active:rounded-md"
+        >
+          <img src={download} alt="download" className="w-5 h-5" />
+          <p className="p-1 ">Download</p>
+        </div>
 
         <div
           onClick={() => delItem({ id: item.id, path: item.path })}
           className="flex items-center hover:bg-gray-200 hover:rounded-md active:bg-gray-200 active:rounded-md"
         >
-          <p className="p-1 text-red-600">Delete</p>
           <img src={dustbin} alt="delete" className="w-5 h-5" />
+          <p className="p-1 text-red-600">Delete</p>
         </div>
 
         <div className="text-sm px-1 pt-1">
