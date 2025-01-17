@@ -17,27 +17,41 @@ const initialState: DriveState = {
 const addItemAtPath = (
   items: DriveItem[],
   path: string[],
-  item: DriveItem
+  newItem: DriveItem
 ): DriveItem[] => {
   if (path.length === 0) {
-    return [...items, item];
+    return [...items, newItem];
   }
 
-  const [currentDir, ...remainingPath] = path;
-
-  return items.map((currentItem) => {
-    if (
-      currentItem.itemKind === ItemKind.FOLDER &&
-      currentItem.name === currentDir
-    ) {
+  return items.map((item) => {
+    if (item.itemKind === ItemKind.FOLDER && item.name === path[0]) {
       return {
-        ...currentItem,
-        children: addItemAtPath(currentItem.children, remainingPath, item),
-      } as FolderData;
+        ...item,
+        children: addItemAtPath(item.children, path.slice(1), newItem),
+      };
     }
-
-    return currentItem;
+    return item;
   });
+};
+
+const findItemAtPath = (
+  items: DriveItem[],
+  path: string[]
+): FolderData | null => {
+  let current = items;
+
+  for (const segment of path) {
+    const next = current.find(
+      (item) => item.name === segment && item.itemKind === ItemKind.FOLDER
+    );
+    if (next && next.itemKind === ItemKind.FOLDER) {
+      current = next.children;
+    } else {
+      return null;
+    }
+  }
+
+  return current as unknown as FolderData;
 };
 
 const driveSlice = createSlice({
@@ -62,8 +76,27 @@ const driveSlice = createSlice({
       });
     },
 
-    createFolder(state, action: PayloadAction<{ path: string[], name: string }>) {
+    createFolder(
+      state,
+      action: PayloadAction<{ path: string[]; name: string }>
+    ) {
       const { path, name } = action.payload;
+
+      const parentFolder =
+        path.length === 0
+          ? { children: state.files }
+          : findItemAtPath(state.files, path);
+
+      if (
+        parentFolder &&
+        "children" in parentFolder &&
+        parentFolder.children.some(
+          (child) => child.name === name && child.itemKind === ItemKind.FOLDER
+        )
+      ) {
+        throw new Error("FILE_ALREADY_EXISTS");
+      }
+
       state.files = addItemAtPath(state.files, path, {
         id: uuidv4(),
         name,

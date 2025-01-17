@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FileData, ItemKind } from "../types";
 import { v4 as uuidv4 } from "uuid";
 import { DriveItem, FolderData } from "../types";
+import toast from "react-hot-toast";
 
 interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   directory?: string;
@@ -130,13 +131,19 @@ const UploadButton = () => {
 
       if (fileDataArray.length === 1 && !fileDataArray[0].path) {
         addNewSingleFile({ file: fileDataArray[0], path: directory });
+        toast.dismiss();
+        toast.success("File uploaded successfully");
       } else {
         const organizedStructure = createFolderStructure(fileDataArray);
         addNewMultipleFiles({ folder: organizedStructure, path: directory });
+        toast.dismiss();
+        toast.success("Folder uploaded successfully");
       }
+
     } catch (error) {
       console.error("Error storing files", error);
-      alert(
+      toast.dismiss();
+      toast.error(
         "Error storing files. The files might be too large for localStorage."
       );
     }

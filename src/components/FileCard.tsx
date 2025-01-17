@@ -5,6 +5,7 @@ import rename from "../assets/icons/rename.svg";
 import { formatFileSize, formatTimestampToDate } from "../helper";
 import { motion, AnimatePresence } from "framer-motion";
 import useDrive from "../store/hooks/useDrive";
+import toast from "react-hot-toast";
 
 const FileCard = ({ file }: { file: FileData }) => {
   const [showMore, setShowMore] = useState(false);
@@ -13,12 +14,26 @@ const FileCard = ({ file }: { file: FileData }) => {
   const { delItem, editFileName } = useDrive();
 
   const handleNameUpdate = () => {
+    if (!newName) {
+      toast.dismiss();
+      toast.error("Please enter a name");
+      return;
+    }
+
+    if (file.name === newName) {
+      toast.dismiss();
+      toast.error("Please change the name");
+      return;
+    }
+    
     editFileName({
       id: file.id,
       name: newName,
       path: file.path,
       itemKind: file.itemKind,
     });
+    toast.dismiss();
+    toast.success("File renamed successfully");
     setShowRename(false);
     setShowMore(false);
   };

@@ -9,6 +9,7 @@ import FileCard from "./FileCard";
 import useDrive from "../store/hooks/useDrive";
 import useDirectory from "../store/hooks/useDirectory";
 import angle from "../assets/icons/angle.svg";
+import toast from "react-hot-toast";
 
 const FolderCard = ({ folder }: { folder: FolderData }) => {
   const [showMore, setShowMore] = useState(false);
@@ -20,6 +21,18 @@ const FolderCard = ({ folder }: { folder: FolderData }) => {
   const { directory, pushNewDirectory, popPreviousDirectory } = useDirectory();
 
   const handleNameUpdate = () => {
+    if (!newName) {
+      toast.dismiss();
+      toast.error("Please enter a name");
+      return;
+    }
+
+    if (folder.name === newName) {
+      toast.dismiss();
+      toast.error("Please change the name");
+      return;
+    }
+
     const id = folder.id;
     const name = newName;
     editFileName({ id, name, path: folder.path, itemKind: folder.itemKind });
@@ -31,7 +44,7 @@ const FolderCard = ({ folder }: { folder: FolderData }) => {
     <>
       <div className="w-full h-fit relative">
         <div
-          onClick={() => {
+          onDoubleClick={() => {
             setShowFiles(true);
             pushNewDirectory(folder.name);
           }}

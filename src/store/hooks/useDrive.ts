@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   FileData,
@@ -32,10 +33,14 @@ const useDrive = () => {
 
   const delItem = ({ id, path }: DeleteItemProps) => {
     dispatch(deleteItem({ id, path }));
+    toast.dismiss();
+    toast.success("File deleted successfully");
   };
 
   const delAllFiles = () => {
     dispatch(deleteAllFiles());
+    toast.dismiss();
+    toast.success("Folder deleted successfully");
   };
 
   const editFileName = ({ id, name, path, itemKind }: RenameFileProps) => {

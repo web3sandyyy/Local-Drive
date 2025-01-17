@@ -3,13 +3,43 @@ import plus from "../assets/icons/plus.svg";
 import { motion, AnimatePresence } from "framer-motion";
 import useDrive from "../store/hooks/useDrive";
 import useDirectory from "../store/hooks/useDirectory";
+import toast from "react-hot-toast";
 
 const CreateButton = () => {
   const [showCreate, setShowCreate] = useState(false);
+  const [showNameError, setShowNameError] = useState(false);
   const [name, setName] = useState("");
   const [showNameModal, setShowNameModal] = useState(false);
   const { createNewFolder } = useDrive();
   const { directory } = useDirectory();
+
+  const handleCreate = () => {
+    if (!name) {
+      toast.dismiss();
+      toast.error("Please enter a name");
+      return;
+    }
+    try {
+      setShowNameError(false);
+      createNewFolder({ path: directory, name });
+      setShowNameModal(false);
+      toast.dismiss();
+      toast.success("Folder created successfully");
+    } catch (error: any) {
+      setShowNameError(true);
+      if (error.message === "FILE_ALREADY_EXISTS") {
+        toast.dismiss();
+        toast.error(
+          "A folder with this name already exists. Try a different name."
+        );
+        return;
+      } else {
+        toast.dismiss();
+        toast.error("Something went wrong. Please try again.");
+        return;
+      }
+    }
+  };
 
   return (
     <div>
@@ -59,19 +89,17 @@ const CreateButton = () => {
       {showNameModal && (
         <div className="h-screen w-screen fixed top-0 left-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
           <div className="bg-white p-4 rounded-lg w-4/5 max-w-[300px]">
+            <p className="mb-4">Please enter folder name: </p>
             <input
               type="text"
               placeholder="Enter folder name"
               className="w-full p-2 text-center bg-gray-200 rounded-lg"
               onChange={(e) => setName(e.target.value)}
             />
-            <div className="flex gap-4 mt-4">
+            <div className="flex text-sm font-semibold gap-4 mt-4">
               <button
-                onClick={() => {
-                  createNewFolder({ name: name, path: directory });
-                  setShowNameModal(false);
-                }}
-                className="bg-green-500 active:bg-green-600 hover:bg-green-600 duration-200 p-2 rounded-lg w-full"
+                onClick={() => handleCreate()}
+                className="bg-green-400 active:bg-green-500 hover:bg-green-500 duration-200 p-2 rounded-lg w-full"
               >
                 Create folder
               </button>
@@ -79,11 +107,17 @@ const CreateButton = () => {
                 onClick={() => {
                   setShowNameModal(false);
                 }}
-                className="bg-red-500 active:bg-red-600 hover:bg-red-600 duration-200 p-2 rounded-lg "
+                className="bg-red-400 active:bg-red-500 hover:bg-red-500 duration-200 p-2 rounded-lg "
               >
                 Cancel
               </button>
             </div>
+
+            {showNameError && (
+              <p className="text-xs text-red-500 font-semibold mt-2 ">
+                Name already exist, Please try with different name;
+              </p>
+            )}
           </div>
         </div>
       )}
