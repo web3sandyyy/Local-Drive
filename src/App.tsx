@@ -4,7 +4,6 @@ import FileCard from "./components/FileCard";
 import FolderCard from "./components/FolderCard";
 import useDrive from "./store/hooks/useDrive";
 import { ItemKind } from "./types";
-import { Toaster } from "react-hot-toast";
 import emptyIcon from "./assets/emptyFolder.png";
 import { useState } from "react";
 
@@ -60,7 +59,6 @@ function App() {
         </div>
       </div>
 
-      <Toaster position="top-center" />
     </div>
   );
 }

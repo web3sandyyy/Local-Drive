@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import useDrive from "../store/hooks/useDrive";
 import useDirectory from "../store/hooks/useDirectory";
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 
 const CreateButton = () => {
   const [showCreate, setShowCreate] = useState(false);
@@ -72,9 +73,12 @@ const CreateButton = () => {
             className="text-base flex flex-col divide-y border rounded-b-lg overflow-hidden cursor-pointer shadow-md bg-white"
           >
             <div className="w-full p-2">
-              <p className="p-2 hover:bg-gray-200 active:bg-gray-200 duration-200 rounded-lg ">
+              <Link
+                to="/create"
+                className="p-2 block hover:bg-gray-200 active:bg-gray-200 duration-200 rounded-lg "
+              >
                 Create text file
-              </p>
+              </Link>
               <p
                 onClick={() => setShowNameModal(true)}
                 className="hover:bg-gray-200 active:bg-gray-200 duration-200 p-2 rounded-lg "

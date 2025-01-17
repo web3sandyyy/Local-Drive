@@ -9,6 +9,7 @@ import {
   RenameFileProps,
 } from "../../types";
 import { v4 as uuidv4 } from "uuid";
+import { findItemAtPath } from "../../helper";
 
 const initialState: DriveState = {
   files: [],
@@ -32,26 +33,6 @@ const addItemAtPath = (
     }
     return item;
   });
-};
-
-const findItemAtPath = (
-  items: DriveItem[],
-  path: string[]
-): FolderData | null => {
-  let current = items;
-
-  for (const segment of path) {
-    const next = current.find(
-      (item) => item.name === segment && item.itemKind === ItemKind.FOLDER
-    );
-    if (next && next.itemKind === ItemKind.FOLDER) {
-      current = next.children;
-    } else {
-      return null;
-    }
-  }
-
-  return current as unknown as FolderData;
 };
 
 const driveSlice = createSlice({
