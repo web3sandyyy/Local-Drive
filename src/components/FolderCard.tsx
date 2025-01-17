@@ -29,7 +29,7 @@ const FolderCard = ({ folder }: { folder: FolderData }) => {
 
   return (
     <>
-      <div className="w-full relative">
+      <div className="w-full h-fit relative">
         <div
           onClick={() => {
             setShowFiles(true);
@@ -153,8 +153,8 @@ const FolderCard = ({ folder }: { folder: FolderData }) => {
       </div>
 
       {showFiles && (
-        <div className="absolute z-10 top-0 bottom-0 right-0 max-h-full h-full w-full overflow-auto bg-white flex flex-col rounded-lg">
-          <div className="h-full w-full ">
+        <div className="absolute z-10 top-0 bottom-0 right-0 max-h-full h-full w-full overflow-auto bg-white flex flex-col rounded-lg" >
+          <div className="h-full w-full flex flex-col">
             <div className="w-full pl-2 flex border-b items-center justify-between">
               <div className="flex items-center gap-2">
                 <motion.div
@@ -193,7 +193,7 @@ const FolderCard = ({ folder }: { folder: FolderData }) => {
               <p className="text-sm font-semibold p-2 ">Sort by Name</p>
             </div>
 
-            <div className="flex-grow w-full h-full relative p-2  md:px-4 grid gap-2 md:gap-4 grid-cols-2 md:grid-cols-3  lg:grid-cols-4 overflow-auto bg-white">
+            <div style={{position: directory[-1] === folder.name ? "relative" : "static"}} className="flex-grow w-full h-full p-2  md:px-4 grid gap-2 md:gap-4 grid-cols-2 md:grid-cols-3  lg:grid-cols-4 overflow-auto bg-white">
               {folder.children.map((file, index) =>
                 file.itemKind === ItemKind.FILE ? (
                   <FileCard key={index} file={file} />
