@@ -158,7 +158,7 @@ const driveSlice = createSlice({
                 ...item,
                 name,
                 path: updatedPath,
-                children: updateChildPaths(item.children, updatedPath),
+                children: updateChildPaths((item as FolderData).children, updatedPath),
               } as FolderData;
             }
           }

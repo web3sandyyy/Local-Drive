@@ -82,7 +82,6 @@ const UploadButton = () => {
 
     files.forEach((file) => {
       const pathParts = file.path.split("/").filter(Boolean);
-      const fileName = pathParts.pop()!;
       const folderPath = pathParts.join("/");
 
       if (folderPath) {
