@@ -17,7 +17,14 @@ const FolderCard = ({ folder }: { folder: FolderData }) => {
   const [showRename, setShowRename] = useState(false);
 
   const { delItem, editFileName } = useDrive();
-  const { directory, pushNewDirectory, popPreviousDirectory } = useDirectory();
+  const {
+    selected,
+    directory,
+    pushNewDirectory,
+    popPreviousDirectory,
+    pushSelectedItem,
+    popSelectedItem,
+  } = useDirectory();
 
   const handleNameUpdate = () => {
     const id = folder.id;
@@ -29,21 +36,47 @@ const FolderCard = ({ folder }: { folder: FolderData }) => {
 
   return (
     <>
-      <div className="w-full h-fit relative">
+      <div
+        style={{
+          backgroundColor: selected.includes(folder.id) ? "#D1D5DB" : "",
+        }}
+        className="w-full h-fit relative p-2 rounded-lg"
+      >
         <div
-          onClick={() => {
-            setShowFiles(true);
-            pushNewDirectory(folder.name);
+          onDoubleClick={() => {
+              setShowFiles(true);
+              pushNewDirectory(folder.name);
           }}
-          className="w-full relative"
+          onClick={() => {
+            if (selected.includes(folder.id)) {
+              popSelectedItem(folder.id);
+            } else {
+              pushSelectedItem(folder.id);
+            }
+          }}
+          className="w-full relative "
         >
           <div className="w-full aspect-square rounded-2xl  md:rounded-3xl flex items-end">
             <div className="h-full w-1/2 bg-gray-200 rounded-l-2xl rounded-tr-2xl md:rounded-l-3xl md:rounded-tr-3xl"></div>
 
             <div className="h-full w-1/2 ">
               <div className="h-1/5 bg-gray-200 flex ">
-                <div className="h-full w-1/2 bg-white rounded-bl-2xl  md:rounded-bl-3xl"></div>
-                <div className="h-full w-1/2 bg-white"></div>
+                <div
+                  style={{
+                    backgroundColor: selected.includes(folder.id)
+                      ? "#D1D5DB"
+                      : "",
+                  }}
+                  className="h-full w-1/2 bg-white rounded-bl-2xl  md:rounded-bl-3xl"
+                ></div>
+                <div
+                  style={{
+                    backgroundColor: selected.includes(folder.id)
+                      ? "#D1D5DB"
+                      : "",
+                  }}
+                  className="h-full w-1/2 bg-white "
+                ></div>
               </div>
               <div className="h-4/5 w-full bg-gray-200 rounded-r-2xl md:rounded-r-3xl"></div>
             </div>
@@ -153,7 +186,7 @@ const FolderCard = ({ folder }: { folder: FolderData }) => {
       </div>
 
       {showFiles && (
-        <div className="absolute z-10 top-0 bottom-0 right-0 max-h-full h-full w-full overflow-auto bg-white flex flex-col rounded-lg" >
+        <div className="absolute z-10 top-0 bottom-0 right-0 max-h-full h-full w-full overflow-auto bg-white flex flex-col rounded-lg">
           <div className="h-full w-full flex flex-col">
             <div className="w-full pl-2 flex border-b items-center justify-between">
               <div className="flex items-center gap-2">
@@ -193,7 +226,12 @@ const FolderCard = ({ folder }: { folder: FolderData }) => {
               <p className="text-sm font-semibold p-2 ">Sort by Name</p>
             </div>
 
-            <div style={{position: directory[-1] === folder.name ? "relative" : "static"}} className="flex-grow w-full h-full p-2  md:px-4 grid gap-2 md:gap-4 grid-cols-2 md:grid-cols-3  lg:grid-cols-4 overflow-auto bg-white">
+            <div
+              style={{
+                position: directory[-1] === folder.name ? "relative" : "static",
+              }}
+              className="flex-grow w-full h-full p-2 grid gap-2 grid-cols-2 md:grid-cols-3  lg:grid-cols-4 overflow-auto bg-white"
+            >
               {folder.children.map((file, index) =>
                 file.itemKind === ItemKind.FILE ? (
                   <FileCard key={index} file={file} />

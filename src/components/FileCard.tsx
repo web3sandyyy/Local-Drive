@@ -5,12 +5,14 @@ import rename from "../assets/icons/rename.svg";
 import { formatFileSize, formatTimestampToDate } from "../helper";
 import { motion, AnimatePresence } from "framer-motion";
 import useDrive from "../store/hooks/useDrive";
+import useDirectory from "../store/hooks/useDirectory";
 
 const FileCard = ({ file }: { file: FileData }) => {
   const [showMore, setShowMore] = useState(false);
   const [showRename, setShowRename] = useState(false);
   const [newName, setNewName] = useState(file.name);
   const { delItem, editFileName } = useDrive();
+  const { selected, pushSelectedItem, popSelectedItem } = useDirectory();
 
   const handleNameUpdate = () => {
     editFileName({
@@ -24,8 +26,20 @@ const FileCard = ({ file }: { file: FileData }) => {
   };
 
   return (
-    <div className="w-full h-fit relative overflow-hidden">
-      <div className="aspect-square border rounded-3xl p-1 md:p-2 overflow-hidden ">
+    <div
+      onClick={() => {
+        if (selected.includes(file.id)) {
+          popSelectedItem(file.id);
+        } else {
+          pushSelectedItem(file.id);
+        }
+      }}
+      style={{
+        backgroundColor: selected.includes(file.id) ? "#D1D5DB" : "",
+      }}
+      className="w-full h-fit relative overflow-hidden p-1 rounded-lg "
+    >
+      <div  className="aspect-square border rounded-3xl p-1 md:p-2 overflow-hidden ">
         {file.fileType.startsWith("image/") && (
           <img
             src={file.content}

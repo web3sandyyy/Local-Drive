@@ -34,6 +34,7 @@ export interface DriveState {
 
 export interface DirectoryState {
   directory: string[];
+  selected: string[];
 }
 
 export interface RenameFileProps {

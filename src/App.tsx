@@ -19,7 +19,7 @@ function App() {
           </div>
 
           <div className="flex-grow overflow-scroll rounded-b-lg ">
-            <div className="w-full min-h-fit mt-2 p-2  md:px-4 grid gap-2 md:gap-4 grid-cols-2 md:grid-cols-3  lg:grid-cols-4 overflow-auto ">
+            <div className="w-full min-h-fit mt-2 p-2 grid gap-2  grid-cols-2 md:grid-cols-3  lg:grid-cols-4 overflow-auto ">
               {files.map((file, index) =>
                 file.itemKind === ItemKind.FILE ? (
                   <FileCard key={index} file={file} />

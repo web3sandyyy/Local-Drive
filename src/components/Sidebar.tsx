@@ -8,7 +8,7 @@ import useDirectory from "../store/hooks/useDirectory";
 
 const Sidebar = () => {
   const [showMenu, setShowMenu] = useState(false);
-  const { directory } = useDirectory();
+  const { directory, selected } = useDirectory();
   return (
     <>
       <div className="hidden md:inline h-screen min-w-[150px] max-w-[250px] w-[30%] bg-gray-200">
@@ -20,8 +20,13 @@ const Sidebar = () => {
         <div className="mt-4 ml-4 text-lg flex flex-col shadow-bottom-only overflow-hidden rounded-lg">
           <CreateButton />
           <UploadButton />
-          <p onClick={() => console.log(directory)}>director</p>
         </div>
+
+        {selected.length > 0 && (
+          <div className="mt-4 ml-4">
+            <p className="font-semibold">Selected: {selected.length}</p>
+          </div>
+        )}
       </div>
 
       <div className="md:hidden flex justify-center items-center gap-2 text-2xl font-bold px-4 py-2 text-center bg-gray-200">
